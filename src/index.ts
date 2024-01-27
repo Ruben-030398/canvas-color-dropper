@@ -17,7 +17,8 @@ const button = new Button({
     text: 'Click me please click!',
     borderRadius: 10,
     textProps: {  y: 145 },
-    borderColor: 'blue'
+    borderColor: 'blue',
+    onClick: () => console.log('clicked')
 })
 
 

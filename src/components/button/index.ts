@@ -38,7 +38,9 @@ export default class Button extends DisplayObject {
     this.textProps = viewProps.textProps
     this.backgroundProps = viewProps.backgroundProps
 
-    this.onClick = viewProps.onClick;
+    this.onClick = viewProps.onClick ? viewProps.onClick.bind(this) : null;
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
   draw(ctx: CanvasRenderingContext2D): void {    
@@ -60,19 +62,32 @@ export default class Button extends DisplayObject {
   }
 
   handleClick(event: MouseEvent): void {
+    console.log(event, 'BBBBBBBBBBBBBBBBB');
+    
+    const canvas = document.getElementById('canvas');
+
+    const boundingRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - boundingRect.left;
+    const mouseY = event.clientY - boundingRect.top;
+
     const isInsideButton =
-      event.clientX >= this.x - this.width / 2 &&
-      event.clientX <= this.x + this.width / 2 &&
-      event.clientY >= this.y - this.height / 2 &&
-      event.clientY <= this.y + this.height / 2;
+      mouseX >= this.x - this.width / 2 &&
+      mouseX <= this.x + this.width / 2 &&
+      mouseY >= this.y - this.height / 2 &&
+      mouseY <= this.y + this.height / 2;
 
     if (isInsideButton) {
-      this.onClick ();
+      // Execute click animation or any other logic
+      this.onClick();
     }
   }
 
-  onCreate() {
-
+  onCreate(_, ) {
+    if (this.onClick) {
+      console.log('AAAAAAAAAAAAA');
+      
+      document.getElementById('canvas')!.addEventListener('click', this.handleClick)
+    }
 
     if (this.backgroundSrc) {
       const picture = new Picture({ x: this.x, y: this.y, src: this.backgroundSrc, ...this.backgroundProps })

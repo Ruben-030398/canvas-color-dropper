@@ -25,6 +25,8 @@ class App {
   init() {
     this.canvas = document.createElement('canvas');
 
+    this.canvas.id = 'canvas';
+
     this.ctx = this.canvas.getContext("2d");
 
     this.container = document.getElementById("container") || document.body;
