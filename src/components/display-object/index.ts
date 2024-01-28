@@ -23,8 +23,8 @@ export default abstract class DisplayObject {
 
     this.x = viewProps.x || 0;
     this.y = viewProps.y || 0;
-    this.width = viewProps.width || 1;
-    this.height = viewProps.height || 1;
+    this.width = viewProps.width || 0;
+    this.height = viewProps.height || 0;
 
     this.children = new Map();
 
@@ -48,12 +48,10 @@ export default abstract class DisplayObject {
 
     this.children.set(child.id, child);
 
-    console.log(child.onCreate)
-
-    child.onCreate && child.onCreate(store.getState());
+    child.onCreate && child.onCreate(store.getState());    
 
     if (getter) {
-      connect(child, getter)
+      connect(child, getter)()
     }
   }
 

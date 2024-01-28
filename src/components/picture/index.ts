@@ -42,9 +42,28 @@ export default class Picture extends DisplayObject {
     this.image.src = this.src;
 
     this.image.onload = () => {
+      
       this.imageLoaded = true;
       this.width = this.width || this.image.width;
       this.height = this.height || this.image.height;
+    }
+  }
+
+  updateSrc(src: string, onload?: () => void) {
+    this.src = src
+
+    this.image = new Image();
+
+    this.image.src = this.src;
+    
+    this.imageLoaded = false;
+    
+    this.image.onload = () => {
+      this.imageLoaded = true;
+      this.width = this.image.width;
+      this.height = this.image.height;
+
+      onload && onload()
     }
   }
 

@@ -14,9 +14,6 @@ const store = createStore<RootState, Actions>(
   applyMiddleware(...middlewares as Array<Middleware>)
 );
 
-console.log(store, 'store');
-
-
 export type AppDispatch = typeof store.dispatch
 
 export default store;

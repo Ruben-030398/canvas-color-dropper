@@ -46,9 +46,7 @@ class App extends DisplayObject {
     this.initialized = true;
   }
 
-  #onResize() {
-    console.log('onResize');
-    
+  #onResize() {    
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight; 
   } 
@@ -77,10 +75,7 @@ class App extends DisplayObject {
   draw() {
     this.stop();
 
-    this.ctx && this.eventListener.setupListeners(this, ['pointerdown', 'pointerover', 'pointerup', 'pointermove'], this.ctx)
-
-    console.log('draw');
-    
+    this.ctx && this.eventListener.setupListeners(this, ['pointerdown', 'pointerover', 'pointerup', 'pointermove'], this.ctx)    
 
     window.addEventListener('resize', throttle(this.#onResize.bind(this), 200))
 
