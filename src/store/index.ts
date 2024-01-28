@@ -1,15 +1,22 @@
-import { createStore, combineReducers, Action, applyMiddleware, Middleware } from 'redux';
+import { createStore, applyMiddleware,combineReducers, Middleware } from 'redux';
 
-import middlewares from './middlewares';
+import { reducers } from './reducers';
+import { middlewares } from './middlewares';
+import { Actions } from './actions';
 
-export type RootState = {
+const rootReducer = combineReducers(reducers);
 
-}
+export type RootState = ReturnType<typeof rootReducer>;
 
-const store = createStore<RootState, Action>(
+const store = createStore<RootState, Actions>(
   //@ts-ignore
-  combineReducers({}),
+  rootReducer,
   applyMiddleware(...middlewares as Array<Middleware>)
 );
+
+console.log(store, 'store');
+
+
+export type AppDispatch = typeof store.dispatch
 
 export default store;

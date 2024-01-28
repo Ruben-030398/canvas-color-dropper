@@ -38,12 +38,13 @@ const createApp = () => {
     app.mount(button2);
     app.mount(button);
     app.mount(picture);
+
     console.log(app, 'app')
     app.draw();
 }
 
 
-const initDropArea = () => {
+const initUploadArea = () => {
     const main = document.getElementById('main') as HTMLElement;
     const dropArea = document.getElementById('drop-area') as HTMLDivElement;
     const fileInput = document.getElementById('file-input') as HTMLInputElement;
@@ -72,7 +73,7 @@ const initDropArea = () => {
     });
 }
 
-initDropArea();
+initUploadArea();
 
 createApp();
 

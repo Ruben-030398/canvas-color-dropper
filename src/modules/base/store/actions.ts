@@ -1,13 +1,15 @@
-import { BaseActionTypes } from "./action-types"
+import { BaseActions } from "./action-types"
 
 export type UploadImageAction =  {
-  type: BaseActionTypes.IMAGE_UPLOADED,
-  payload: { file: File | Blob }
+  type: BaseActions.IMAGE_UPLOADED,
+  payload: { file: File }
 }
 
-export const uploadImage = (file: File | Blob): UploadImageAction => {
+export const uploadImage = (file: File): UploadImageAction => {
   return {
-    type: BaseActionTypes.IMAGE_UPLOADED,
+    type: BaseActions.IMAGE_UPLOADED,
     payload: { file }
   }
 }
+
+export type BaseActionTypes = UploadImageAction
