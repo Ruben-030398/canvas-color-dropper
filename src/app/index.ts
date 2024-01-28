@@ -1,25 +1,30 @@
 import DisplayObject from "@/components/display-object";
+import { ViewProps } from "@/components/display-object/types";
 
-import store, { RootState } from "@/store";
-
-import { connect } from "@/store/utils/connect";
+import { RootState } from "@/store";
 
 import { config } from './config';
 
-class App {
+import EventListener from './event-listener';
+
+class App extends DisplayObject {
   container: HTMLElement;
-  canvas: HTMLCanvasElement;
+  canvas: HTMLCanvasElement;isInsideButton
   ctx: CanvasRenderingContext2D;
   children: Map<string, DisplayObject>;
   animationId: number | null;
   initialized: boolean;
+  eventListener: EventListener
 
-  constructor() {
+  constructor(props: ViewProps) {
+    super(props)
     this.initialized = false;
 
     this.children = new Map();
 
     this.animationId = null;
+
+    this.eventListener = new EventListener()
   }
 
   init() {
@@ -48,16 +53,19 @@ class App {
     const renderStack = [...Array.from(this.children.values())];
 
     while(renderStack.length) {
-      const node = renderStack.pop();
+      const node = renderStack.shift();
 
       node.draw && node.draw(this.ctx);
 
-      node.children.size && renderStack.push(...Array.from(node.children.values()))
+      node.children.size && renderStack.unshift(...Array.from(node.children.values()))
     }
+  
   }
 
-  start() {
+  draw() {
     this.stop();
+
+    this.eventListener.setupListeners(this, ['pointerdown', 'pointerover', 'pointerup', 'pointermove'], this.ctx)
 
     this.#render();
   }
@@ -66,23 +74,17 @@ class App {
     this.animationId && cancelAnimationFrame(this.animationId)
   }
 
-  mount<T>(object: DisplayObject, getter?: (state: RootState) => T,) {
-    if (this.children.has(object.id)) return;
-
-    object.onCreate && object.onCreate(store.getState());
-
-    this.children.set(object.id, object);
-
-    if (getter) {
-      connect(object, getter)
-    }
+  onCreate(store: RootState): void {
+    
   }
 
-  unMount(object: DisplayObject) {
-    this.children.delete(object.id);
+  onUpdate(): void {
+    
+  }
 
-    object.unsubscribe && object.unsubscribe();
+  onUnMount(): void {
+    this.eventListener.removeListeners(this.ctx)
   }
 }
 
-export default new App();
+export default new App({ x: 0, y: 0 });

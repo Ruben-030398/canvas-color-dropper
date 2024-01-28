@@ -8,20 +8,18 @@ import { TypographyProps } from '../typography/types';
 import { PictureProps } from '../picture/types';
 
 import { ButtonProps } from './types';
-
 export default class Button extends DisplayObject {
   color: string;
   text?: string
   backgroundSrc?: string
   borderRadius?: Array<number> | number 
-  children: Map<string, Picture | Typography>
   textProps?: Partial<TypographyProps>
   backgroundProps?: Partial<PictureProps>
   borderColor?: string;
   onClick?: () => void
 
   constructor(viewProps: ButtonProps) {
-    super(viewProps);
+    super({ ...viewProps, interactive: true });
     this.text = viewProps.text;
 
     this.color = viewProps.color || 'transparent';
@@ -35,20 +33,17 @@ export default class Button extends DisplayObject {
     this.width = viewProps.width || 100
     this.height = viewProps.height || 60
 
-    this.textProps = viewProps.textProps
-    this.backgroundProps = viewProps.backgroundProps
+    this.textProps = viewProps.textProps || {}
+    this.backgroundProps = viewProps.backgroundProps || {}
 
     this.onClick = viewProps.onClick ? viewProps.onClick.bind(this) : null;
-
-    this.handleClick = this.handleClick.bind(this);
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {    
+  draw(ctx: CanvasRenderingContext2D): void {   
     ctx.fillStyle = this.color;
-    ctx.strokeStyle = this.borderColor;
 
-    ctx.fill();
-
+    ctx.strokeStyle = 'transparent';
+    
     ctx.stroke();
     ctx.beginPath();
     ctx.roundRect(
@@ -59,48 +54,38 @@ export default class Button extends DisplayObject {
       this.borderRadius
     );
     ctx.closePath();
+
+    ctx.fill();
   }
 
-  handleClick(event: MouseEvent): void {
-    console.log(event, 'BBBBBBBBBBBBBBBBB');
-    
-    const canvas = document.getElementById('canvas');
-
-    const boundingRect = canvas.getBoundingClientRect();
-    const mouseX = event.clientX - boundingRect.left;
-    const mouseY = event.clientY - boundingRect.top;
-
-    const isInsideButton =
-      mouseX >= this.x - this.width / 2 &&
-      mouseX <= this.x + this.width / 2 &&
-      mouseY >= this.y - this.height / 2 &&
-      mouseY <= this.y + this.height / 2;
-
-    if (isInsideButton) {
-      // Execute click animation or any other logic
-      this.onClick();
-    }
-  }
-
-  onCreate(_, ) {
-    if (this.onClick) {
-      console.log('AAAAAAAAAAAAA');
-      
-      document.getElementById('canvas')!.addEventListener('click', this.handleClick)
-    }
+  onCreate() {
+    this.onClick && this.on('pointerdown', this.onClick);
 
     if (this.backgroundSrc) {
-      const picture = new Picture({ x: this.x, y: this.y, src: this.backgroundSrc, ...this.backgroundProps })
+      const picture = new Picture({ 
+        ...this.backgroundProps, 
+        x: this.x + (this.backgroundProps.x || 0), 
+        y: this.y + (this.backgroundProps.y || 0), 
+        src: this.backgroundSrc, 
+      })
 
-      this.children.set(picture.id, picture);
+      this.mount(picture)
     }
 
     if (this.text) {
-      const text = new Typography({ x: this.x, y: this.y, text: this.text, width: this.width, ...this.textProps })
+      console.log(this.y + (this.textProps.y || 0) , 'this.textProps.y ');
+      
+      const text = new Typography({ 
+        ...this.textProps,
+        x: this.x + (this.textProps.x || 0), 
+        y: this.y + (this.textProps.y || 0), 
+        text: this.text, 
+        width: this.width, 
+      })
 
-     this.children.set(text.id, text);
+     this.mount(text)
     }
-
+    
   }
 
   onUpdate() {}

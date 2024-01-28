@@ -21,7 +21,7 @@ export default class Picture extends DisplayObject {
 
   draw(ctx: CanvasRenderingContext2D) {    
     if (!this.imageLoaded) return;
-
+    
     ctx.drawImage(
       this.image, 
       this.x - (this.width * this.anchor[0]), 

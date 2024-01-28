@@ -14,16 +14,18 @@ export default class Typography extends DisplayObject {
   constructor(viewProps: TypographyProps) {
     super(viewProps);
 
+    console.log(viewProps, 'viewProps');
+    
+
     this.strokeStyle = viewProps.strokeStyle
     this.strokeStyle = viewProps.strokeStyle
     this.lineWidth = viewProps.lineWidth || 5
     this.fillStyle = viewProps.fillStyle || 'blue'
     this.textAlign = viewProps.textAlign || 'center'
 
-    this.fontSize = viewProps.fontSize || 1.6;
+    this.fontSize = viewProps.fontSize || 16;
     this.textBaseline = viewProps.textBaseline || 'middle'
-    this.font = viewProps.font || `bold ${this.fontSize}rem Poppins sans-serif`
-
+    this.font = viewProps.font || `bold ${this.fontSize}px Poppins sans-serif`
 
     this.text = viewProps.text
   }
@@ -33,7 +35,6 @@ export default class Typography extends DisplayObject {
     const words = this.text.split(' ');
     let currentLine = words[0];
     let currentY = this.y;
-    let linesCount = 1;
 
     for (let i = 1; i < words.length; i++) {
       const testLine = currentLine + ' ' + words[i];
@@ -43,9 +44,8 @@ export default class Typography extends DisplayObject {
         currentLine = testLine;
       } else {
         ctx.fillText(currentLine, this.x, currentY);
-        currentY += this.fontSize * 10; 
+        currentY += this.fontSize; 
         currentLine = words[i];
-        linesCount++;
       }
     }
 

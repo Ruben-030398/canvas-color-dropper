@@ -1,7 +1,7 @@
 import {nanoid} from 'nanoid'
 import store, { RootState } from '@/store';
 
-import { ViewProps } from "./types";
+import { DisplayObjectEvent, DisplayObjectForm, ViewProps } from "./types";
 import { connect } from '@/store/utils/connect';
 
 export default abstract class DisplayObject {
@@ -9,14 +9,12 @@ export default abstract class DisplayObject {
   y?: number
   width?: number
   height?: number
-
+  interactive: boolean
   id: string
-
   children: Map<string, DisplayObject>
-
-  ctx: CanvasRenderingContext2D
-
   unsubscribe?: () => void
+  listeners: Map<DisplayObjectEvent, (event: Event) => void>
+  form: DisplayObjectForm
 
   constructor(viewProps: ViewProps) {
     this.x = viewProps.x || 0;
@@ -26,23 +24,25 @@ export default abstract class DisplayObject {
 
     this.children = new Map();
 
-    this.id = nanoid();
+    this.listeners = new Map();
 
-    this.ctx = null;
+    this.interactive = viewProps.interactive || false;
+
+    this.form = viewProps.form || 'rect';
+
+    this.id = nanoid();
   }
 
-  abstract draw(ctx: CanvasRenderingContext2D): void
-
-  abstract onCreate(store: RootState): void 
-
-  abstract onUpdate(update: any): void
-
-  abstract onUnMount(): void
+  on(event: DisplayObjectEvent, cb: (event: Event) => void){
+    this.listeners.set(event, cb)
+  }
 
   mount<T>(child: DisplayObject, getter?: (state: RootState) => T) {
     if (this.children.has(child.id)) return;
 
     this.children.set(child.id, child);
+
+    console.log(child.onCreate)
 
     child.onCreate && child.onCreate(store.getState());
 
@@ -54,6 +54,8 @@ export default abstract class DisplayObject {
   unMount(child: DisplayObject) {
     this.children.delete(child.id);
 
+    child.unsubscribe && child.unsubscribe();
+
     child.onUnMount();
   }
 
@@ -62,4 +64,12 @@ export default abstract class DisplayObject {
       this[key] = value
     });
   }
+
+  abstract draw(ctx: CanvasRenderingContext2D): void
+
+  abstract onCreate(store: RootState): void 
+
+  abstract onUpdate(update: any): void
+
+  abstract onUnMount(): void
 }
