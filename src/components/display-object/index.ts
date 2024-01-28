@@ -16,8 +16,11 @@ export default abstract class DisplayObject {
   unsubscribe?: () => void
   children: Map<string, DisplayObject>
   listeners: Map<DisplayObjectEvent, (event: Event) => void>
+  renderable: boolean
 
   constructor(viewProps: ViewProps) {
+    this.renderable = true;
+
     this.x = viewProps.x || 0;
     this.y = viewProps.y || 0;
     this.width = viewProps.width || 1;

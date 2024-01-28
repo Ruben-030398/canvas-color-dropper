@@ -22,7 +22,9 @@ class App extends DisplayObject {
 
     this.children = new Map();
 
-    this.eventListener = new EventListener()
+    this.eventListener = new EventListener();
+
+    this.renderable = false // this becomes true only after IMAGE_UPLOADED action fired 
   }
 
   init() {
@@ -36,7 +38,6 @@ class App extends DisplayObject {
     this.canvas.height = window.innerHeight;
     this.canvas.style.position = 'absolute';
     this.canvas.style.top = '0px'; 
-    // this.canvas.style.pointerEvents = 'none';
 
     this.container = document.getElementById("container") || document.body;
 
@@ -55,14 +56,16 @@ class App extends DisplayObject {
   #render() {
     this.ctx?.clearRect(0, 0, this.canvas.width , this.canvas.height);
 
-    this.animationId = requestAnimationFrame(this.#render.bind(this));   
+    this.animationId = requestAnimationFrame(this.#render.bind(this)); 
+    
+    if (!this.renderable) return;
     
     const renderStack = [...Array.from(this.children.values())];
 
     while(renderStack.length) {
       const node = renderStack.shift();
 
-      if(!node) return;
+      if(!node || !node.renderable) continue;
 
       node.draw && node.draw(this?.ctx);
 

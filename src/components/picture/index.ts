@@ -1,7 +1,9 @@
-import { PictureProps } from "./types";
+import { isObject } from "lodash";
+
 import DisplayObject from "../display-object";
 import { Scale } from "../display-object/types";
-import { isObject } from "lodash";
+
+import { PictureProps } from "./types";
 
 export default class Picture extends DisplayObject {
   src: string
