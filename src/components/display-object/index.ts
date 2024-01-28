@@ -1,7 +1,7 @@
 import {nanoid} from 'nanoid'
 import store, { RootState } from '@/store';
 
-import { DisplayObjectEvent, DisplayObjectForm, ViewProps } from "./types";
+import { DisplayObjectEvent, DisplayObjectForm, Scale, ViewProps } from "./types";
 import { connect } from '@/store/utils/connect';
 
 export default abstract class DisplayObject {
@@ -15,6 +15,7 @@ export default abstract class DisplayObject {
   unsubscribe?: () => void
   listeners: Map<DisplayObjectEvent, (event: Event) => void>
   form: DisplayObjectForm
+  scale: Scale| number
 
   constructor(viewProps: ViewProps) {
     this.x = viewProps.x || 0;
@@ -29,6 +30,8 @@ export default abstract class DisplayObject {
     this.interactive = viewProps.interactive || false;
 
     this.form = viewProps.form || 'rect';
+
+    this.scale = viewProps.scale || { x:1, y: 1 };
 
     this.id = nanoid();
   }

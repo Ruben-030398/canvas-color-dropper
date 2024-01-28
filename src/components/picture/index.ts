@@ -1,11 +1,14 @@
 import { PictureProps } from "./types";
 import DisplayObject from "../display-object";
+import { Scale } from "../display-object/types";
+import { isObject } from "lodash";
 
 export default class Picture extends DisplayObject {
   src: string
   imageLoaded: boolean
   image: HTMLImageElement
   anchor: [number, number]
+  scale: Scale
 
   constructor(viewProps: PictureProps) {
     super(viewProps);
@@ -16,18 +19,20 @@ export default class Picture extends DisplayObject {
 
     this.src = viewProps.src
 
+    this.scale = isObject(viewProps.scale) ? viewProps.scale : { x: 1, y: 1 }
+
     this.anchor = viewProps.anchor || [0.5, 0.5];
   }
 
-  draw(ctx: CanvasRenderingContext2D) {    
+  draw(ctx: CanvasRenderingContext2D) {
     if (!this.imageLoaded) return;
-    
+
     ctx.drawImage(
-      this.image, 
-      this.x - (this.width * this.anchor[0]), 
-      this.y - (this.height * this.anchor[1]), 
-      this.width, 
-      this.height
+      this.image,
+      this.x - (this.width * this.anchor[0] * this.scale.x),
+      this.y - (this.height * this.anchor[1] * this.scale.y),
+      this.width * this.scale.x,
+      this.height * this.scale.y,
     );
   }
 
@@ -46,6 +51,6 @@ export default class Picture extends DisplayObject {
   }
 
   onUnMount(): void {
-    
+
   }
 }

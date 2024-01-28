@@ -10,13 +10,12 @@ export default class Typography extends DisplayObject {
   textAlign?: CanvasTextAlign;
   textBaseline?: CanvasTextBaseline;
   fontSize: number
+  wordBreak: 'auto' | 'none'
 
   constructor(viewProps: TypographyProps) {
     super(viewProps);
 
     console.log(viewProps, 'viewProps');
-    
-
     this.strokeStyle = viewProps.strokeStyle
     this.strokeStyle = viewProps.strokeStyle
     this.lineWidth = viewProps.lineWidth || 5
@@ -26,6 +25,8 @@ export default class Typography extends DisplayObject {
     this.fontSize = viewProps.fontSize || 16;
     this.textBaseline = viewProps.textBaseline || 'middle'
     this.font = viewProps.font || `bold ${this.fontSize}px Poppins sans-serif`
+
+    this.wordBreak = viewProps.wordBreak || 'none';
 
     this.text = viewProps.text
   }
@@ -55,13 +56,14 @@ export default class Typography extends DisplayObject {
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.font = this.font || ''
+    ctx.font = `bold ${this.fontSize}px Poppins sans-serif`
     ctx.fillStyle = this.fillStyle || ''
     ctx.textAlign = this.textAlign || 'center'
     ctx.lineWidth = this.lineWidth || 1
     ctx.strokeStyle = this.strokeStyle || ''
     ctx.textBaseline = this.textBaseline || 'middle'
 
-    if (ctx.measureText(this.text).width > this.width) {
+    if (ctx.measureText(this.text).width > this.width && this.wordBreak === 'auto') {
       this.#breakText(ctx)
     } else {
       ctx.fillText(this.text, this.x, this.y);

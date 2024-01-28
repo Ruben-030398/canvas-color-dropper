@@ -9,4 +9,5 @@ export type TypographyProps = {
   textBaseline?: CanvasTextBaseline;
   text: string
   fontSize?: number;
+  wordBreak?: 'auto' | 'none'
 } & ViewProps

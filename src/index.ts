@@ -12,12 +12,13 @@ const picture = new Picture({ x: 200, y: 30, src: 'assets/upload.png' });
 
 const button = new Button({
     x: 300,
-    y: 200,
-    text: 'Click button 1!',
+    y: 100,
+    text: 'Click',
     borderRadius: 10,
     color: 'black',
-    textProps: { y: -8 },
+    backgroundSrc: 'assets/upload.png',
     onClick: () => console.log('clicked'),
+    textProps: { fillStyle: '#fff' },
     backgroundProps: { width: 75, height: 75 }
 })
 
