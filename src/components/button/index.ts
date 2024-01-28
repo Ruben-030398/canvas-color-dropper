@@ -1,4 +1,4 @@
-import gsap from 'gsap';
+// import gsap from 'gsap';
 
 import DisplayObject from '../display-object';
 import Typography from '../typography';
@@ -36,7 +36,7 @@ export default class Button extends DisplayObject {
     this.textProps = viewProps.textProps || {}
     this.backgroundProps = viewProps.backgroundProps || {}
 
-    this.onClick = viewProps.onClick ? viewProps.onClick.bind(this) : null;
+    this.onClick = viewProps.onClick && viewProps.onClick.bind(this);
   }
 
   draw(ctx: CanvasRenderingContext2D): void {   
@@ -64,8 +64,8 @@ export default class Button extends DisplayObject {
     if (this.backgroundSrc) {
       const picture = new Picture({ 
         ...this.backgroundProps, 
-        x: this.x + (this.backgroundProps.x || 0), 
-        y: this.y + (this.backgroundProps.y || 0), 
+        x: this.x + (this.backgroundProps?.x || 0), 
+        y: this.y + (this.backgroundProps?.y || 0), 
         src: this.backgroundSrc, 
       })
 
@@ -73,12 +73,12 @@ export default class Button extends DisplayObject {
     }
 
     if (this.text) {
-      console.log(this.y + (this.textProps.y || 0) , 'this.textProps.y ');
+      console.log(this.y + (this.textProps?.y || 0) , 'this.textProps.y ');
       
       const text = new Typography({ 
         ...this.textProps,
-        x: this.x + (this.textProps.x || 0), 
-        y: this.y + (this.textProps.y || 0), 
+        x: this.x + (this.textProps?.x || 0), 
+        y: this.y + (this.textProps?.y || 0), 
         text: this.text, 
         width: this.width, 
       })

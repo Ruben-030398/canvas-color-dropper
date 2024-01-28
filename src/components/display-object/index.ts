@@ -5,10 +5,10 @@ import { DisplayObjectEvent, DisplayObjectForm, ViewProps } from "./types";
 import { connect } from '@/store/utils/connect';
 
 export default abstract class DisplayObject {
-  x?: number
-  y?: number
-  width?: number
-  height?: number
+  x: number
+  y: number
+  width: number
+  height: number
   interactive: boolean
   id: string
   children: Map<string, DisplayObject>
@@ -19,8 +19,8 @@ export default abstract class DisplayObject {
   constructor(viewProps: ViewProps) {
     this.x = viewProps.x || 0;
     this.y = viewProps.y || 0;
-    this.width = viewProps.width;
-    this.height = viewProps.height;
+    this.width = viewProps.width || 1;
+    this.height = viewProps.height || 1;
 
     this.children = new Map();
 
@@ -61,11 +61,11 @@ export default abstract class DisplayObject {
 
   update<T extends ViewProps>(props: Partial<T>) {
     Object.entries(props).forEach(([key, value]) => {
-      this[key] = value
+      this[key as keyof typeof this] = value
     });
   }
 
-  abstract draw(ctx: CanvasRenderingContext2D): void
+  abstract draw(ctx: CanvasRenderingContext2D | null): void
 
   abstract onCreate(store: RootState): void 
 

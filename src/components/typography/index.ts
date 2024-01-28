@@ -54,13 +54,12 @@ export default class Typography extends DisplayObject {
 
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.font = this.font
-    ctx.fillStyle = this.fillStyle
-    ctx.textAlign = this.textAlign
-    ctx.lineWidth = this.lineWidth
-    ctx.strokeStyle = this.strokeStyle
-    ctx.strokeStyle = this.strokeStyle
-    ctx.textBaseline = this.textBaseline
+    ctx.font = this.font || ''
+    ctx.fillStyle = this.fillStyle || ''
+    ctx.textAlign = this.textAlign || 'center'
+    ctx.lineWidth = this.lineWidth || 1
+    ctx.strokeStyle = this.strokeStyle || ''
+    ctx.textBaseline = this.textBaseline || 'middle'
 
     if (ctx.measureText(this.text).width > this.width) {
       this.#breakText(ctx)

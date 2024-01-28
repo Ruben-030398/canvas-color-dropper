@@ -25,22 +25,22 @@ class EventListener {
     events.forEach(event => {
       switch (event) {
         case "pointerdown":          
-          const onPointerDown = this.createListener('pointerdown', rootObject).bind(this);
+          const onPointerDown = this.createListener('pointerdown', rootObject);
           canvas.addEventListener('pointerdown', onPointerDown);
           this.listeners.set('pointerdown', onPointerDown)
           break;
         case "pointerup":
-          const onPointerUp = this.createListener('pointerup', rootObject).bind(this);
+          const onPointerUp = this.createListener('pointerup', rootObject);
           canvas.addEventListener('pointerup', onPointerUp);
           this.listeners.set('pointerup', onPointerUp)
           break;
         case "pointerover":
-          const onPointerOver = this.createListener('pointerover', rootObject).bind(this);
+          const onPointerOver = this.createListener('pointerover', rootObject);
           canvas.addEventListener('pointerover', onPointerOver);
           this.listeners.set('pointerover', onPointerOver)
           break;
         case "pointermove":
-          const onPointerMove = this.createListener('pointermove', rootObject).bind(this);
+          const onPointerMove = this.createListener('pointermove', rootObject);
           canvas.addEventListener('pointermove', onPointerMove);
           this.listeners.set('pointermove', onPointerMove)
           break;
@@ -49,7 +49,9 @@ class EventListener {
   }
 
   checkCollision(object: DisplayObject, rootObject: RootObject, event: PointerEvent) {
-    const canvas = rootObject.ctx.canvas;
+    const canvas = rootObject.ctx?.canvas;
+
+    if(!canvas) return;
 
     const boundingRect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - boundingRect.left;
@@ -76,12 +78,14 @@ class EventListener {
 
   createListener(eventType: DisplayObjectEvent, rootObject: RootObject,) {
 
-    return function (event: PointerEvent) {
+    return (event: PointerEvent) => {
 
       const objectsStack = [...Array.from(rootObject.children.values())];
       
       while (objectsStack.length) {
-        const node = objectsStack.shift();
+        const node = objectsStack.pop();
+
+        if (!node) return;
 
         if (node.interactive) {
           const listener = node.listeners.get(eventType);
@@ -93,7 +97,7 @@ class EventListener {
           }
         }
 
-        node.children.size && objectsStack.unshift(...Array.from(node.children.values()))
+        node.children.size && objectsStack.push(...Array.from(node.children.values()))
       }
     }
 

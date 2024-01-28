@@ -15,7 +15,3 @@ declare module '*.sass' {
 declare module '*.jpg'
 declare module '*.jpeg'
 declare module '*.gif'
-
-interface HTMLInputEvent extends Event {
-  target: HTMLInputElement & EventTarget;
-}

@@ -5,6 +5,7 @@ export type RootState = {
 }
 
 const store = createStore<RootState, Action>(
+  //@ts-ignore
   combineReducers({})
 );
 

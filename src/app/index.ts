@@ -1,16 +1,14 @@
+import { throttle } from "lodash";
+
 import DisplayObject from "@/components/display-object";
 import { ViewProps } from "@/components/display-object/types";
-
-import { RootState } from "@/store";
-
-import { config } from './config';
 
 import EventListener from './event-listener';
 
 class App extends DisplayObject {
-  container: HTMLElement;
-  canvas: HTMLCanvasElement;isInsideButton
-  ctx: CanvasRenderingContext2D;
+  container!: HTMLElement;
+  canvas!: HTMLCanvasElement;
+  ctx!: CanvasRenderingContext2D | null;
   children: Map<string, DisplayObject>;
   animationId: number | null;
   initialized: boolean;
@@ -20,9 +18,9 @@ class App extends DisplayObject {
     super(props)
     this.initialized = false;
 
-    this.children = new Map();
-
     this.animationId = null;
+
+    this.children = new Map();
 
     this.eventListener = new EventListener()
   }
@@ -34,19 +32,28 @@ class App extends DisplayObject {
 
     this.ctx = this.canvas.getContext("2d");
 
-    this.container = document.getElementById("container") || document.body;
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.canvas.style.position = 'absolute';
+    this.canvas.style.top = '0px'; 
+    // this.canvas.style.pointerEvents = 'none';
 
-    this.canvas.width = config.origWidth;
-    this.canvas.height = config.origHeight;
-    this.canvas.style.background = config.backgroundColor;
+    this.container = document.getElementById("container") || document.body;
 
     this.container.appendChild(this.canvas);
 
     this.initialized = true;
   }
 
+  #onResize() {
+    console.log('onResize');
+    
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight; 
+  } 
+
   #render() {
-    this.ctx.clearRect(0, 0, this.canvas.width , this.canvas.height);
+    this.ctx?.clearRect(0, 0, this.canvas.width , this.canvas.height);
 
     this.animationId = requestAnimationFrame(this.#render.bind(this));   
     
@@ -55,7 +62,9 @@ class App extends DisplayObject {
     while(renderStack.length) {
       const node = renderStack.shift();
 
-      node.draw && node.draw(this.ctx);
+      if(!node) return;
+
+      node.draw && node.draw(this?.ctx);
 
       node.children.size && renderStack.unshift(...Array.from(node.children.values()))
     }
@@ -65,7 +74,12 @@ class App extends DisplayObject {
   draw() {
     this.stop();
 
-    this.eventListener.setupListeners(this, ['pointerdown', 'pointerover', 'pointerup', 'pointermove'], this.ctx)
+    this.ctx && this.eventListener.setupListeners(this, ['pointerdown', 'pointerover', 'pointerup', 'pointermove'], this.ctx)
+
+    console.log('draw');
+    
+
+    window.addEventListener('resize', throttle(this.#onResize.bind(this), 200))
 
     this.#render();
   }
@@ -74,7 +88,7 @@ class App extends DisplayObject {
     this.animationId && cancelAnimationFrame(this.animationId)
   }
 
-  onCreate(store: RootState): void {
+  onCreate(): void {
     
   }
 
@@ -83,7 +97,7 @@ class App extends DisplayObject {
   }
 
   onUnMount(): void {
-    this.eventListener.removeListeners(this.ctx)
+    this.ctx && this.eventListener.removeListeners(this.ctx)
   }
 }
 

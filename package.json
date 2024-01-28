@@ -11,6 +11,7 @@
   "author": "Ruben-030398",
   "license": "ISC",
   "devDependencies": {
+    "@types/lodash": "^4.14.202",
     "@types/redux": "^3.6.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.2",
