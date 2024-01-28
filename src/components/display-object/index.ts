@@ -1,4 +1,4 @@
-import {nanoid} from 'nanoid'
+import { nanoid } from 'nanoid'
 import store, { RootState } from '@/store';
 
 import { DisplayObjectEvent, DisplayObjectForm, Scale, ViewProps } from "./types";
@@ -7,15 +7,15 @@ import { connect } from '@/store/utils/connect';
 export default abstract class DisplayObject {
   x: number
   y: number
+  id: string
   width: number
   height: number
   interactive: boolean
-  id: string
-  children: Map<string, DisplayObject>
-  unsubscribe?: () => void
-  listeners: Map<DisplayObjectEvent, (event: Event) => void>
+  scale: Scale | number
   form: DisplayObjectForm
-  scale: Scale| number
+  unsubscribe?: () => void
+  children: Map<string, DisplayObject>
+  listeners: Map<DisplayObjectEvent, (event: Event) => void>
 
   constructor(viewProps: ViewProps) {
     this.x = viewProps.x || 0;
@@ -31,12 +31,12 @@ export default abstract class DisplayObject {
 
     this.form = viewProps.form || 'rect';
 
-    this.scale = viewProps.scale || { x:1, y: 1 };
+    this.scale = viewProps.scale || { x: 1, y: 1 };
 
     this.id = nanoid();
   }
 
-  on(event: DisplayObjectEvent, cb: (event: Event) => void){
+  on(event: DisplayObjectEvent, cb: (event: Event) => void) {
     this.listeners.set(event, cb)
   }
 
@@ -70,7 +70,7 @@ export default abstract class DisplayObject {
 
   abstract draw(ctx: CanvasRenderingContext2D | null): void
 
-  abstract onCreate(store: RootState): void 
+  abstract onCreate(store: RootState): void
 
   abstract onUpdate(update: any): void
 

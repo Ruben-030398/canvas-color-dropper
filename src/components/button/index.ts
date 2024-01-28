@@ -1,4 +1,5 @@
 import gsap from 'gsap';
+import { isObject } from 'lodash';
 
 import DisplayObject from '../display-object';
 import Typography from '../typography';
@@ -6,20 +7,19 @@ import Picture from '../picture';
 
 import { TypographyProps } from '../typography/types';
 import { PictureProps } from '../picture/types';
-
 import { ButtonProps } from './types';
 import { Scale } from '../display-object/types';
-import { isObject } from 'lodash';
+
 export default class Button extends DisplayObject {
-  color: string;
+  scale: Scale;
   text?: string
-  backgroundSrc?: string
-  borderRadius?: Array<number> | number
-  textProps?: Partial<TypographyProps>
-  backgroundProps?: Partial<PictureProps>
+  color: string;
   borderColor?: string;
   onClick?: () => void
-  scale: Scale;
+  backgroundSrc?: string
+  textProps?: Partial<TypographyProps>
+  borderRadius?: Array<number> | number
+  backgroundProps?: Partial<PictureProps>
 
   constructor(viewProps: ButtonProps) {
     super({ ...viewProps, interactive: true });

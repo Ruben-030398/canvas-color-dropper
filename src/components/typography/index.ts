@@ -4,18 +4,17 @@ import { TypographyProps } from "./types";
 export default class Typography extends DisplayObject {
   text: string
   font?: string;
+  fontSize: number
   lineWidth?: number;
   fillStyle?: string;
   strokeStyle?: string;
+  wordBreak: 'auto' | 'none'
   textAlign?: CanvasTextAlign;
   textBaseline?: CanvasTextBaseline;
-  fontSize: number
-  wordBreak: 'auto' | 'none'
 
   constructor(viewProps: TypographyProps) {
     super(viewProps);
 
-    console.log(viewProps, 'viewProps');
     this.strokeStyle = viewProps.strokeStyle
     this.strokeStyle = viewProps.strokeStyle
     this.lineWidth = viewProps.lineWidth || 5
@@ -30,7 +29,6 @@ export default class Typography extends DisplayObject {
 
     this.text = viewProps.text
   }
-
 
   #breakText(ctx: CanvasRenderingContext2D){
     const words = this.text.split(' ');
@@ -52,7 +50,6 @@ export default class Typography extends DisplayObject {
 
     ctx.fillText(currentLine, this.x, currentY);
   }
-
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.font = this.font || ''

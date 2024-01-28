@@ -5,10 +5,10 @@ import { isObject } from "lodash";
 
 export default class Picture extends DisplayObject {
   src: string
+  scale: Scale
   imageLoaded: boolean
   image: HTMLImageElement
   anchor: [number, number]
-  scale: Scale
 
   constructor(viewProps: PictureProps) {
     super(viewProps);
