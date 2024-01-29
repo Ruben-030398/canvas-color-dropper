@@ -3,6 +3,7 @@ import store, { RootState } from '@/store';
 
 import { DisplayObjectEvent, DisplayObjectForm, Scale, ViewProps } from "./types";
 import { connect } from '@/store/utils/connect';
+import { isBoolean } from 'lodash';
 
 export default abstract class DisplayObject {
   x: number
@@ -19,7 +20,7 @@ export default abstract class DisplayObject {
   renderable: boolean
 
   constructor(viewProps: ViewProps) {
-    this.renderable = viewProps.renderable || true;
+    this.renderable = isBoolean(viewProps.renderable) ?  viewProps.renderable : true;
 
     this.x = viewProps.x || 0;
     this.y = viewProps.y || 0;

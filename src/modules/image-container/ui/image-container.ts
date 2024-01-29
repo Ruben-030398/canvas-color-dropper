@@ -58,7 +58,7 @@ export default class ImageContainer extends DisplayObject {
     })
 
     console.log(this.image.listeners);
-    
+
 
     window.addEventListener('resize', this.onResize);
 

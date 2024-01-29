@@ -18,12 +18,12 @@ export default class Typography extends DisplayObject {
     this.strokeStyle = viewProps.strokeStyle
     this.strokeStyle = viewProps.strokeStyle
     this.lineWidth = viewProps.lineWidth || 5
-    this.fillStyle = viewProps.fillStyle || 'blue'
+    this.fillStyle = viewProps.fillStyle || 'black'
     this.textAlign = viewProps.textAlign || 'center'
 
     this.fontSize = viewProps.fontSize || 16;
     this.textBaseline = viewProps.textBaseline || 'middle'
-    this.font = viewProps.font || `bold ${this.fontSize}px Poppins sans-serif`
+    this.font = viewProps.font || `${this.fontSize}px Arial`
 
     this.wordBreak = viewProps.wordBreak || 'none';
 
@@ -53,7 +53,7 @@ export default class Typography extends DisplayObject {
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.font = this.font || ''
-    ctx.font = `bold ${this.fontSize}px Poppins sans-serif`
+    ctx.font = `600 ${this.fontSize}px Arial`
     ctx.fillStyle = this.fillStyle || ''
     ctx.textAlign = this.textAlign || 'center'
     ctx.lineWidth = this.lineWidth || 1

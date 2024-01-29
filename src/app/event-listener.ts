@@ -19,6 +19,7 @@ class EventListener {
     })
 
     this.listeners.clear();
+    this.pointerInObjects.clear();
   }
 
   setupListeners(rootObject: RootObject, events: Array<DisplayObjectEvent>, ctx: CanvasRenderingContext2D) {

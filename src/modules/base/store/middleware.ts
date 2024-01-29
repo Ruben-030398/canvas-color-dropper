@@ -7,10 +7,11 @@ export const baseMiddleware =
   (_: MiddlewareAPI) =>
     (next: Dispatch<Actions>) =>
       (action: Actions) => {
+        next(action);
+
         if (action.type === BaseActions.IMAGE_UPLOADED) {
           app.renderable = true;
         }
 
-        next(action);
       };
 
