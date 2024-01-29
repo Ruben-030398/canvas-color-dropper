@@ -24,7 +24,7 @@ class EventListener {
 
     events.forEach(event => {
       switch (event) {
-        case "pointerdown":          
+        case "pointerdown":
           const onPointerDown = this.createListener('pointerdown', rootObject);
           canvas.addEventListener('pointerdown', onPointerDown);
           this.listeners.set('pointerdown', onPointerDown)
@@ -34,15 +34,15 @@ class EventListener {
           canvas.addEventListener('pointerup', onPointerUp);
           this.listeners.set('pointerup', onPointerUp)
           break;
-        case "pointerover":
-          const onPointerOver = this.createListener('pointerover', rootObject);
-          canvas.addEventListener('pointerover', onPointerOver);
-          this.listeners.set('pointerover', onPointerOver)
-          break;
         case "pointermove":
           const onPointerMove = this.createListener('pointermove', rootObject);
           canvas.addEventListener('pointermove', onPointerMove);
           this.listeners.set('pointermove', onPointerMove)
+          break;
+        case "pointerout":
+          const onPointerOut = this.createListener('pointerout', rootObject);
+          canvas.addEventListener('pointermove', onPointerOut);
+          this.listeners.set('pointerout', onPointerOut)
           break;
       }
     })
@@ -51,7 +51,7 @@ class EventListener {
   checkCollision(object: DisplayObject, rootObject: RootObject, event: PointerEvent) {
     const canvas = rootObject.ctx?.canvas;
 
-    if(!canvas) return;
+    if (!canvas) return;
 
     const boundingRect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - boundingRect.left;
@@ -76,29 +76,54 @@ class EventListener {
     return isInsideObjectArea;
   }
 
-  createListener(eventType: DisplayObjectEvent, rootObject: RootObject,) {
+  createListener(eventType: DisplayObjectEvent, rootObject: RootObject) {
 
-    return (event: PointerEvent) => {
+    switch (eventType) {
+      case 'pointerout':
+        return (event: PointerEvent) => {
+          const objectsStack = [...Array.from(rootObject.children.values())];
 
-      const objectsStack = [...Array.from(rootObject.children.values())];
-      
-      while (objectsStack.length) {
-        const node = objectsStack.pop();
+          while (objectsStack.length) {
+            const node = objectsStack.pop();
 
-        if (!node) return;
+            if (!node) return;
 
-        if (node.interactive) {
-          const listener = node.listeners.get(eventType);
+            if (node.interactive) {
+              const listener = node.listeners.get(eventType);
 
-          if (listener && this.checkCollision(node, rootObject, event)) {
-            listener && listener(event)
+              if (listener && !this.checkCollision(node, rootObject, event)) {
+                listener && listener(event)
 
-            return;
+                return;
+              }
+            }
+
+            node.children.size && objectsStack.push(...Array.from(node.children.values()))
           }
         }
+      default:
+        return (event: PointerEvent) => {
 
-        node.children.size && objectsStack.push(...Array.from(node.children.values()))
-      }
+          const objectsStack = [...Array.from(rootObject.children.values())];
+
+          while (objectsStack.length) {
+            const node = objectsStack.pop();
+
+            if (!node) return;
+
+            if (node.interactive) {
+              const listener = node.listeners.get(eventType);
+
+              if (listener && this.checkCollision(node, rootObject, event)) {
+                listener && listener(event)
+
+                return;
+              }
+            }
+
+            node.children.size && objectsStack.push(...Array.from(node.children.values()))
+          }
+        }
     }
 
   }

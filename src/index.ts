@@ -6,6 +6,8 @@ import store from './store';
 import { uploadImage } from './modules/base/store/actions';
 import { ImageContainer } from './modules/image-container/ui';
 
+console.log(store, 'store');
+
 app.init();
 
 const createApp = () => {

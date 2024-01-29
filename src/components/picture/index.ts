@@ -19,6 +19,8 @@ export default class Picture extends DisplayObject {
 
     this.image = new Image();
 
+    this.image.setAttribute('crossOrigin', '');
+
     this.src = viewProps.src
 
     this.scale = isObject(viewProps.scale) ? viewProps.scale : { x: 1, y: 1 }
@@ -53,6 +55,8 @@ export default class Picture extends DisplayObject {
     this.src = src
 
     this.image = new Image();
+
+    this.image.setAttribute('crossOrigin', '');
 
     this.image.src = this.src;
     

@@ -15,11 +15,11 @@ export default abstract class DisplayObject {
   form: DisplayObjectForm
   unsubscribe?: () => void
   children: Map<string, DisplayObject>
-  listeners: Map<DisplayObjectEvent, (event: Event) => void>
+  listeners: Map<DisplayObjectEvent, (event: PointerEvent) => void>
   renderable: boolean
 
   constructor(viewProps: ViewProps) {
-    this.renderable = true;
+    this.renderable = viewProps.renderable || true;
 
     this.x = viewProps.x || 0;
     this.y = viewProps.y || 0;
@@ -39,7 +39,7 @@ export default abstract class DisplayObject {
     this.id = nanoid();
   }
 
-  on(event: DisplayObjectEvent, cb: (event: Event) => void) {
+  on(event: DisplayObjectEvent, cb: (event: PointerEvent) => void) {
     this.listeners.set(event, cb)
   }
 

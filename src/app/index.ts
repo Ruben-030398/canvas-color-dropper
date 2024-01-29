@@ -1,9 +1,9 @@
-import { throttle } from "lodash";
-
 import DisplayObject from "@/components/display-object";
 import { ViewProps } from "@/components/display-object/types";
 
 import EventListener from './event-listener';
+import store from "@/store";
+import { setImageInfo } from "@/modules/image-container/store/actions";
 
 class App extends DisplayObject {
   container!: HTMLElement;
@@ -24,7 +24,7 @@ class App extends DisplayObject {
 
     this.eventListener = new EventListener();
 
-    this.renderable = false // this becomes true only after IMAGE_UPLOADED action fired 
+    this.renderable = true // this becomes true only after IMAGE_UPLOADED action fired 
   }
 
   init() {
@@ -75,11 +75,13 @@ class App extends DisplayObject {
   draw() {
     this.stop();
 
-    this.ctx && this.eventListener.setupListeners(this, ['pointerdown', 'pointerover', 'pointerup', 'pointermove'], this.ctx)    
+    this.ctx && this.eventListener.setupListeners(this, ['pointerdown', 'pointerout', 'pointerup', 'pointermove'], this.ctx)    
 
-    window.addEventListener('resize', throttle(this.#onResize.bind(this), 200))
+    window.addEventListener('resize', this.#onResize.bind(this))
 
     this.#render();
+
+    store.dispatch(setImageInfo({ name: '', src: 'https://i.ytimg.com/vi/00xjZxL8ypM/maxresdefault.jpg' }))
   }
 
   stop() {
