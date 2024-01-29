@@ -4,9 +4,11 @@ import { DisplayObjectEvent } from "@/components/display-object/types";
 
 class EventListener {
   listeners: Map<DisplayObjectEvent, (event: PointerEvent) => void>;
+  pointerInObjects: Set<string>
 
   constructor() {
     this.listeners = new Map();
+    this.pointerInObjects = new Set();
   }
 
   removeListeners(ctx: CanvasRenderingContext2D) {
@@ -91,9 +93,9 @@ class EventListener {
             if (node.interactive) {
               const listener = node.listeners.get(eventType);
 
-              if (listener && !this.checkCollision(node, rootObject, event)) {
+              if (listener && !this.checkCollision(node, rootObject, event) && this.pointerInObjects.has(node.id)) {
                 listener && listener(event)
-
+                this.pointerInObjects.delete(node.id);
                 return;
               }
             }
@@ -101,6 +103,28 @@ class EventListener {
             node.children.size && objectsStack.push(...Array.from(node.children.values()))
           }
         }
+        case 'pointermove':
+          return (event: PointerEvent) => {
+            const objectsStack = [...Array.from(rootObject.children.values())];
+  
+            while (objectsStack.length) {
+              const node = objectsStack.pop();
+  
+              if (!node) return;
+  
+              if (node.interactive) {
+                const listener = node.listeners.get(eventType);
+  
+                if (listener && this.checkCollision(node, rootObject, event)) {
+                  listener && listener(event)
+                  this.pointerInObjects.add(node.id);
+                  return;
+                }
+              }
+  
+              node.children.size && objectsStack.push(...Array.from(node.children.values()))
+            }
+          }
       default:
         return (event: PointerEvent) => {
 
