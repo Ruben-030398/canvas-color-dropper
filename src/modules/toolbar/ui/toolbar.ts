@@ -3,10 +3,13 @@ import { ViewProps } from "@/components/display-object/types";
 import { RootState } from "@/store";
 import ScaleButtons from "./scale-buttons";
 
+
+const MIN_WIDTH = 800;
 export class Toolbar extends DisplayObject {
-  selectedColor: Typography
   color: string;
   copyButton: Button
+  selectedColor: Typography
+  scaleButtons: ScaleButtons
   constructor(props: ViewProps) {
     super(props);
 
@@ -19,19 +22,24 @@ export class Toolbar extends DisplayObject {
     ctx.beginPath();
     ctx.fillStyle = `#e3e3e3`;
     ctx.roundRect(
-      window.innerWidth * 0.175,
+      50,
       35,
-      window.innerWidth * 0.65,
+      Math.max(MIN_WIDTH - 100, window.innerWidth - 100),
       70,
       20
     );
     ctx.fill();
     ctx.closePath();
 
+    const colorRectX = 
+      window.innerWidth < MIN_WIDTH 
+      ? window.innerWidth - ctx.measureText(this.color).width - 15
+      : window.innerWidth / 2 - ctx.measureText(this.color).width - 15;
+
     ctx.beginPath();
     ctx.fillStyle = this.color;
     this.color && ctx.roundRect(
-      window.innerWidth / 2 - ctx.measureText(this.color).width - 15, // gap,
+      colorRectX,
       50,
       35,
       35,
@@ -46,8 +54,8 @@ export class Toolbar extends DisplayObject {
   onCreate(state: RootState): void {
     this.color = state.base.color;
 
-    const scaleButtons = new ScaleButtons({
-      x: window.innerWidth / 2,
+    this.scaleButtons = new ScaleButtons({
+      x: 175,
       y: 70,
     })
 
@@ -65,27 +73,36 @@ export class Toolbar extends DisplayObject {
       text: 'Copy',
       borderRadius: 5,
       renderable: !!this.color,
-       color: 'Black',
+      color: 'Black',
       onClick: () => navigator.clipboard.writeText(this.color),
       textProps: { fillStyle: '#fff' },
-      backgroundProps: { width: 75, height: 75 }
     })
 
     this.mount(this.selectedColor);
     this.mount(this.copyButton);
-    this.mount(scaleButtons);
+    this.mount(this.scaleButtons, state => state.base.lupaScale);
 
     window.addEventListener('resize', this.onResize);
   }
 
   onResize() {
-    this.selectedColor.update({
-      x: window.innerWidth / 2
-    })
+    if (window.innerWidth > MIN_WIDTH) {
+      this.selectedColor.update({
+        x: window.innerWidth / 2
+      })
 
-    this.copyButton.update<Button>({
-      x: window.innerWidth / 2 + 70,
-    });
+      this.copyButton.update({
+        x: window.innerWidth / 2 + 70,
+      });
+    } else {
+      this.selectedColor.update({
+        x: window.innerWidth -150
+      })
+
+      this.copyButton.update({
+        x: window.innerWidth -150 - 70,
+      });
+    }
   }
 
   onUpdate(color: string): void {

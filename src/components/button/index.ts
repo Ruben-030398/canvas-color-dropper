@@ -1,5 +1,4 @@
 import gsap from 'gsap';
-import { isObject } from 'lodash';
 
 import DisplayObject from '../display-object';
 import Typography from '../typography';
@@ -8,10 +7,8 @@ import Picture from '../picture';
 import { TypographyProps } from '../typography/types';
 import { PictureProps } from '../picture/types';
 import { ButtonProps } from './types';
-import { Scale } from '../display-object/types';
 
 export default class Button extends DisplayObject {
-  scale: Scale;
   text?: string
   color: string;
   borderColor?: string;
@@ -39,8 +36,6 @@ export default class Button extends DisplayObject {
     this.textProps = viewProps.textProps || {}
     this.backgroundProps = viewProps.backgroundProps || {}
 
-    this.scale = isObject(viewProps.scale) ? viewProps.scale : { x: 1, y: 1 };
-
     this.onClick = viewProps.onClick && viewProps.onClick.bind(this);
   }
 
@@ -54,10 +49,10 @@ export default class Button extends DisplayObject {
     ctx.stroke();
     ctx.beginPath();
     ctx.roundRect(
-      this.x - (this.width * 0.5 * this.scale.x),
-      this.y - (this.height * 0.5 * this.scale.y),
-      this.width * this.scale.x,
-      this.height * this.scale.y,
+      this.x - (this.width * 0.5 * this.scaleX),
+      this.y - (this.height * 0.5 * this.scaleY),
+      this.width * this.scaleX,
+      this.height * this.scaleY,
       this.borderRadius
     );
 
@@ -73,8 +68,6 @@ export default class Button extends DisplayObject {
     if (this.backgroundSrc) {
       picture = new Picture({
         ...this.backgroundProps,
-        x: this.x + (this.backgroundProps?.x || 0),
-        y: this.y + (this.backgroundProps?.y || 0),
         src: this.backgroundSrc,
       })
 
@@ -84,64 +77,28 @@ export default class Button extends DisplayObject {
     if (this.text) {
       text = new Typography({
         ...this.textProps,
-        x: this.x + (this.textProps?.x || 0),
-        y: this.y + (this.textProps?.y || 0),
         text: this.text,
-        width: this.width,
       })
 
       this.mount(text)
     }
 
-    this.onClick && this.on('pointerdown', () => {
-      const initialScaleX = this.scale.x;
-      const initialScaleY = this.scale.y;
+    const initialScaleX = this.scaleX;
+    const initialScaleY = this.scaleY;
 
-      gsap.to(this.scale, {
-        x: initialScaleX * 0.9,
-        y: initialScaleY * 0.9,
+    this.onClick && this.on('pointerdown', () => {
+      gsap.to(this, {
+        scaleX: initialScaleX * 0.9,
+        scaleY: initialScaleY * 0.9,
         yoyo: true,
         duration: 0.1,
         onComplete: () => {
-          gsap.to(this.scale, {
-            x: initialScaleX,
-            y: initialScaleY,
+          gsap.to(this, {
+            scaleX: initialScaleX,
+            scaleY: initialScaleY,
           })
         }
       })
-
-      if (picture) {
-        const initialWidth = picture.width;
-        const initialHeight = picture.height;
-
-        gsap.to(picture, {
-          height: initialWidth * 0.9,
-          width: initialHeight * 0.9,
-          yoyo: true,
-          duration: 0.1,
-          onComplete: () => {
-            gsap.to(picture, {
-              height: initialWidth,
-              width: initialHeight,
-            })
-          }
-        })
-      }
-
-      if (text) {
-        const initialFontSize = text.fontSize;
-
-        gsap.to(text, {
-          fontSize: initialFontSize * 0.9,
-          yoyo: true,
-          duration: 0.1,
-          onComplete: () => {
-            gsap.to(text, {
-              fontSize: initialFontSize,
-            })
-          }
-        })
-      }
 
       this.onClick && this.onClick()
     });

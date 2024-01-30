@@ -1,11 +1,11 @@
 export type ViewProps = {
-  x: number,
-  y: number,
+  x?: number,
+  y?: number,
   width?: number,
   height?: number,
   interactive?: boolean
   form?: DisplayObjectForm
-  scale?: Scale | number
+  scale?: Scale 
   renderable?: boolean 
 }
 

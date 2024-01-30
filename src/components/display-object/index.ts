@@ -1,29 +1,32 @@
 import { nanoid } from 'nanoid'
-import store, { RootState } from '@/store';
+import { isBoolean, isNumber } from 'lodash';
 
-import { DisplayObjectEvent, DisplayObjectForm, Scale, ViewProps } from "./types";
+import store, { RootState } from '@/store';
 import { connect } from '@/store/utils/connect';
-import { isBoolean } from 'lodash';
+
+import { DisplayObjectEvent, DisplayObjectForm, ViewProps } from "./types";
 
 export default abstract class DisplayObject {
-  x: number
-  y: number
   id: string
+  _x: number
+  _y: number
   width: number
   height: number
+  _scaleX: number
+  _scaleY: number
+  renderable: boolean
   interactive: boolean
-  scale: Scale | number
   form: DisplayObjectForm
   unsubscribe?: () => void
+  parent: null | DisplayObject
   children: Map<string, DisplayObject>
   listeners: Map<DisplayObjectEvent, (event: PointerEvent) => void>
-  renderable: boolean
 
   constructor(viewProps: ViewProps) {
-    this.renderable = isBoolean(viewProps.renderable) ?  viewProps.renderable : true;
+    this.renderable = isBoolean(viewProps.renderable) ? viewProps.renderable : true;
 
-    this.x = viewProps.x || 0;
-    this.y = viewProps.y || 0;
+    this._x = viewProps.x || 0;
+    this._y = viewProps.y || 0;
     this.width = viewProps.width || 0;
     this.height = viewProps.height || 0;
 
@@ -35,10 +38,44 @@ export default abstract class DisplayObject {
 
     this.form = viewProps.form || 'rect';
 
-    this.scale = viewProps.scale || { x: 1, y: 1 };
+    this._scaleX = viewProps.scale?.x || 1;
+    this._scaleY = viewProps.scale?.y || 1;
 
     this.id = nanoid();
   }
+
+  get x() {
+    return (this.parent?.x || 0) + this._x
+  }
+
+  set x(value: number) {
+    this._x = value
+  }
+
+  get y() {
+    return (this.parent?.y || 0) + this._y
+  }
+
+  set y(value: number) {
+    this._y = value
+  }
+
+  get scaleX(): number {
+    return isNumber(this.parent?.scaleX) ? (this.parent.scaleX * this._scaleX) : this._scaleX
+  }
+
+  set scaleX(value: number) {
+    this._scaleX = value;
+  }
+
+  get scaleY(): number {
+    return isNumber(this.parent?.scaleY) ? (this.parent.scaleY * this._scaleY) : this._scaleY
+  }
+
+  set scaleY(value: number) {
+    this._scaleY = value;
+  }
+
 
   on(event: DisplayObjectEvent, cb: (event: PointerEvent) => void) {
     this.listeners.set(event, cb)
@@ -49,7 +86,9 @@ export default abstract class DisplayObject {
 
     this.children.set(child.id, child);
 
-    child.onCreate && child.onCreate(store.getState());    
+    child.onCreate && child.onCreate(store.getState());
+
+    child.parent = this;
 
     if (getter) {
       connect(child, getter)()

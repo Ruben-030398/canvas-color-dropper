@@ -1,64 +1,21 @@
 import '@/sass/base.sass';
 
 import app from '@/app'
-// import { Button, Picture, Typography } from './components';
-import store from './store';
+import store from '@/store';
+
 import { uploadImage } from './modules/base/store/actions';
 import { ImageContainer } from './modules/image-container/ui';
 import { Toolbar } from './modules/toolbar/ui/toolbar';
-// import { Button } from './components';
 
-console.log(store, 'store');
 
 app.init();
 
 const createApp = () => {
     const imageContainer = new ImageContainer({ x: 0, y: 0 });
     const toolbar = new Toolbar({ x: 0, y: 0 });
-    // const text = new Typography({ x: 100, y: 200, text: 'text' });
-    // const picture = new Picture({ x: 200, y: 30, src: 'assets/upload.png' });
-    // const button = new Button({
-    //     x: 300,
-    //     y: 100,
-    //     text: 'Click',
-    //     borderRadius: 10,
-    //     color: 'black',
-    //     backgroundSrc: 'assets/upload.png',
-    //     onClick: () => console.log('clicked'),
-    //     textProps: { fillStyle: '#fff' },
-    //     backgroundProps: { width: 75, height: 75 }
-    // })
-
-    // button.on('pointermove', () => {
-    //     console.log('pointermove');
-    // })
-
-    // button.on('pointerout', () => {
-    //     console.log('pointerout');
-    // })
-    
-    // const button2 = new Button({
-    //     x: 300,
-    //     y: 200,
-    //     width: 200,
-    //     text: 'button 2',
-    //     borderRadius: 10,
-    //     color: 'red',
-    //     textProps: { fillStyle: '#fff' },
-    //     onClick: () => console.log('clicked button 2'),
-    //     backgroundProps: { width: 75, height: 75 }
-    // })
-    
-    // app.mount(text);
-    // app.mount(button2);
-    // app.mount(button);
-    // app.mount(picture);
-
-    // console.log(app, 'app')
 
     app.mount(imageContainer, store => store.imageInfo);
     app.mount(toolbar, store => store.base.color);
-    app.draw();
 }
 
 
@@ -76,19 +33,27 @@ const initUploadArea = () => {
 
         fileInput.files = e.dataTransfer.files;
 
-        fileInput.files[0] && store.dispatch(uploadImage(fileInput.files[0]));
+        if (fileInput.files[0]) {
+            store.dispatch(uploadImage(fileInput.files[0]));
 
-        main.style.display = 'none';
+            app.draw();
 
+            main.style.display = 'none';
+        }
     });
     fileInput.addEventListener('change', (e: Event) => {
         const target = e.target as HTMLInputElement;
 
         const file = target.files && target.files[0];
 
-        file && store.dispatch(uploadImage(file))
+        if (file) {
+            store.dispatch(uploadImage(file));
 
-        main.style.display = 'none';
+            app.draw();
+
+            main.style.display = 'none';
+        }
+
     });
 }
 

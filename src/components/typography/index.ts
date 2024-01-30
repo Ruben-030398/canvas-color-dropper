@@ -52,9 +52,9 @@ export default class Typography extends DisplayObject {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    // ctx.beginPath();
+    ctx.beginPath();
     ctx.font = this.font || ''
-    ctx.font = `600 ${this.fontSize}px Arial`
+    ctx.font = `600 ${this.fontSize * Math.min(this.scaleX * this.scaleY)}px Arial`
     ctx.fillStyle = this.fillStyle || ''
     ctx.textAlign = this.textAlign || 'center'
     ctx.lineWidth = this.lineWidth || 1
@@ -66,7 +66,7 @@ export default class Typography extends DisplayObject {
     } else {
       ctx.fillText(this.text, this.x, this.y);
     }
-    // ctx.closePath();
+    ctx.closePath();
   }
 
   onCreate(): void {

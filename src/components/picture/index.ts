@@ -1,13 +1,9 @@
-import { isObject } from "lodash";
-
 import DisplayObject from "../display-object";
-import { Scale } from "../display-object/types";
 
 import { PictureProps } from "./types";
 
 export default class Picture extends DisplayObject {
   src: string
-  scale: Scale
   imageLoaded: boolean
   image: HTMLImageElement
   anchor: [number, number]
@@ -23,8 +19,6 @@ export default class Picture extends DisplayObject {
 
     this.src = viewProps.src
 
-    this.scale = isObject(viewProps.scale) ? viewProps.scale : { x: 1, y: 1 }
-
     this.anchor = viewProps.anchor || [0.5, 0.5];
   }
 
@@ -33,10 +27,10 @@ export default class Picture extends DisplayObject {
 
     ctx.drawImage(
       this.image,
-      this.x - (this.width * this.anchor[0] * this.scale.x),
-      this.y - (this.height * this.anchor[1] * this.scale.y),
-      this.width * this.scale.x,
-      this.height * this.scale.y,
+      this.x - (this.width * this.anchor[0] * this.scaleX),
+      this.y - (this.height * this.anchor[1] * this.scaleY),
+      this.width * this.scaleX,
+      this.height * this.scaleY,
     );
   }
 

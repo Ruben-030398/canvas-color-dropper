@@ -20,7 +20,7 @@ export default class ImageContainer extends DisplayObject {
     this.image = new Picture({
       src: '',
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2,
+      y: window.innerHeight / 2 + 50,
       width: window.innerWidth * .7,
       height: window.innerHeight * .7,
       interactive: true,
@@ -57,9 +57,6 @@ export default class ImageContainer extends DisplayObject {
       document.documentElement.style.cursor = 'auto';
     })
 
-    console.log(this.image.listeners);
-
-
     window.addEventListener('resize', this.onResize);
 
     this.mount(this.image)
@@ -70,7 +67,7 @@ export default class ImageContainer extends DisplayObject {
   }
 
   onResize() {
-    const minWidth = window.innerWidth * 0.7;
+    const minWidth = Math.max(700, window.innerWidth * 0.7);
     const minHeight = window.innerHeight * 0.7;
 
     const widthScale = minWidth / this.image.image.width;
@@ -80,7 +77,7 @@ export default class ImageContainer extends DisplayObject {
 
     this.image.update({
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2,
+      y: window.innerHeight / 2  + 50,
       width: this.image.image.width * scale,
       height: this.image.image.height * scale,
     })

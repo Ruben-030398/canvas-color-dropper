@@ -1,62 +1,56 @@
 import { Button, DisplayObject, Typography } from "@/components";
 import { ViewProps } from "@/components/display-object/types";
-import { RootState } from "@/store";
+import { decreaseLupaScale, increaseLupaScale } from "@/modules/base/store/actions";
+import store, { RootState } from "@/store";
 
 export default class ScaleButtons extends DisplayObject {
   plusButton: Button
   minusButton: Button
-  scale: Typography
+  scaleText: Typography
   constructor(props: ViewProps) {
     super(props)
-
-  }
-
-  draw(): void {
-
   }
 
   onCreate(state: RootState): void {
     this.plusButton = new Button({ 
-      x: window.innerWidth * 0.2,
-      y: 70, 
+      x: -55,
       color: 'black',
       width: 35,
       height: 35,
       text: "+",
       textProps: { fillStyle: '#fff' },
       borderRadius: 5,
-      onClick: () => console.log('aaaa'),
+      onClick: () => store.dispatch(increaseLupaScale()),
     })
 
-    this.scale = new Typography({
-      x: window.innerWidth * 0.2 + 55,
-      y: 70, 
+    this.scaleText = new Typography({
       text: `Scale: ${state.base.lupaScale}`
     })
 
     this.minusButton = new Button({ 
-      x: window.innerWidth * 0.2 + 110,
-      y: 70, 
+      x: 55,
       color: 'black',
       width: 35,
       height: 35,
       text: "-",
       textProps: { fillStyle: '#fff' },
       borderRadius: 5,
-      onClick: () => console.log('aaaa'),
+      onClick: () =>store.dispatch(decreaseLupaScale()),
     })
 
     this.mount(this.plusButton);
-    this.mount(this.scale);
+    this.mount(this.scaleText);
     this.mount(this.minusButton);
   }
 
-  onResize() {
-    
+  draw(): void {
+
   }
 
-  onUpdate(): void {
-
+  onUpdate(lupaScale: number): void {
+    this.scaleText.update<Typography>({
+      text: `Scale: ${lupaScale}`
+    });
   }
 
   onUnMount(): void {

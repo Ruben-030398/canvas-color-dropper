@@ -24,6 +24,26 @@ export const setLupaScale = (scale: number): SetLupaScale => {
   }
 }
 
+export type IncreaseLupaScale = {
+  type: BaseActions.INCREASE_LUPA_SCALE,
+}
+
+export const increaseLupaScale = (): IncreaseLupaScale => {
+  return {
+    type: BaseActions.INCREASE_LUPA_SCALE,
+  }
+}
+
+export type DecreaseLupaScale = {
+  type: BaseActions.DECREASE_LUPA_SCALE,
+}
+
+export const decreaseLupaScale = (): DecreaseLupaScale => {
+  return {
+    type: BaseActions.DECREASE_LUPA_SCALE,
+  }
+}
+
 export type SetColor = {
   type: BaseActions.SET_COLOR,
   payload: string,
@@ -37,4 +57,9 @@ export const setColor = (color: string): SetColor => {
 }
 
 
-export type BaseActionTypes = UploadImageAction | SetLupaScale | SetColor 
+export type BaseActionTypes = 
+  UploadImageAction 
+  | SetLupaScale 
+  | SetColor 
+  | IncreaseLupaScale
+  | DecreaseLupaScale

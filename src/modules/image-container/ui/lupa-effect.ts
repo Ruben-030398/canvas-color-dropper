@@ -1,10 +1,12 @@
+import store, { RootState } from "@/store";
+
 import { DisplayObject } from "@/components";
 import { ViewProps } from "@/components/display-object/types";
 import { setColor } from "@/modules/base/store/actions";
-import store, { RootState } from "@/store";
+import { hexToRgb } from "@/utils";
 
 export default class LupaEffect extends DisplayObject {
-  scale: number;
+  scaleValue: number;
   pixelColorHex: string
 
   constructor(props: ViewProps) {
@@ -25,13 +27,13 @@ export default class LupaEffect extends DisplayObject {
 
     ctx.drawImage(
       canvas,
-      this.x - this.width / this.scale,
-      this.y - this.height / this.scale,
+      this.x - this.width / this.scaleValue,
+      this.y - this.height / this.scaleValue,
       this.width,
       this.height,
       this.x - this.width,
       this.y - this.height,
-      this.width * this.scale, this.height * this.scale
+      this.width * this.scaleValue, this.height * this.scaleValue
     );
 
     const imageData = ctx.getImageData(this.x, this.y, 1, 1).data;
@@ -41,6 +43,9 @@ export default class LupaEffect extends DisplayObject {
     const blueHex = imageData[2].toString(16).padStart(2, '0');
 
     this.pixelColorHex = `#${redHex}${greenHex}${blueHex}`;
+
+    const rgbColor = hexToRgb(this.pixelColorHex);
+    const visibleColor = `rgb(${255 - rgbColor.r} ${255 - rgbColor.g} ${255 - rgbColor.b})`;
 
     const step = 5;
     const gap = 8;
@@ -61,6 +66,7 @@ export default class LupaEffect extends DisplayObject {
       ctx.stroke();
     }
 
+    // circle 
     ctx.beginPath();
     ctx.strokeStyle = this.pixelColorHex;
     ctx.lineWidth = 20
@@ -68,20 +74,23 @@ export default class LupaEffect extends DisplayObject {
     ctx.stroke();
     ctx.closePath();
 
+    // target
     ctx.beginPath();
     ctx.lineWidth = 0.5;
-    ctx.strokeStyle = `#fff`;
+    ctx.strokeStyle = visibleColor;
     ctx.rect(this.x, this.y, gap, gap);
     ctx.closePath();
     ctx.stroke();
     ctx.closePath();
 
+    // text bg
     ctx.beginPath();
     ctx.fillStyle = `#e3e3e3`;
     ctx.roundRect(this.x - 35, this.y + 20, 70, 30, 5);
     ctx.fill();
     ctx.closePath();
 
+    //tex
     ctx.beginPath();
     ctx.fillStyle = '#000';
     ctx.font = "16px serif";
@@ -94,18 +103,17 @@ export default class LupaEffect extends DisplayObject {
   }
 
   onCreate(state: RootState): void {
-    console.log(state.base.lupaScale, 'store.base.lupaScale;');
     this.interactive = true;
 
     this.on('pointerdown', () => store.dispatch(setColor(this.pixelColorHex)));
 
-    this.scale = state.base.lupaScale;
+    this.scaleValue = state.base.lupaScale;
   }
 
   onUnMount(): void {
   }
 
   onUpdate(scale: number): void {
-    this.scale = scale
+    this.scaleValue = scale
   }
 }
