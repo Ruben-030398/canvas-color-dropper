@@ -30,7 +30,7 @@ export default class Typography extends DisplayObject {
     this.text = viewProps.text
   }
 
-  #breakText(ctx: CanvasRenderingContext2D){
+  #breakText(ctx: CanvasRenderingContext2D) {
     const words = this.text.split(' ');
     let currentLine = words[0];
     let currentY = this.y;
@@ -43,7 +43,7 @@ export default class Typography extends DisplayObject {
         currentLine = testLine;
       } else {
         ctx.fillText(currentLine, this.x, currentY);
-        currentY += this.fontSize; 
+        currentY += this.fontSize;
         currentLine = words[i];
       }
     }
@@ -52,6 +52,7 @@ export default class Typography extends DisplayObject {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    // ctx.beginPath();
     ctx.font = this.font || ''
     ctx.font = `600 ${this.fontSize}px Arial`
     ctx.fillStyle = this.fillStyle || ''
@@ -65,6 +66,7 @@ export default class Typography extends DisplayObject {
     } else {
       ctx.fillText(this.text, this.x, this.y);
     }
+    // ctx.closePath();
   }
 
   onCreate(): void {
